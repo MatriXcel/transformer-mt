@@ -460,6 +460,8 @@ def main():
         tgt_vocab_size=target_tokenizer.vocab_size,
         dropout=args.dropout_rate
     )
+
+    model = model.to(args.device)
     # YOUR CODE ENDS HERE
 
     ###############################################################################
