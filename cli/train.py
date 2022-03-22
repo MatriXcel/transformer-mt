@@ -452,6 +452,7 @@ def main():
     # YOUR CODE STARTS HERE
     model = TransfomerEncoderDecoderModel(
         num_layers=args.num_layers, 
+        num_heads=args.num_heads,
         hidden=args.hidden_size, 
         fcn_hidden=args.fcn_hidden, 
         max_seq_len=args.max_seq_length,
