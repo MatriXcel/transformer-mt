@@ -100,7 +100,7 @@ class MultiHeadAttention(nn.Module):
             key_padding_mask = torch.repeat_interleave(key_padding_mask, torch.LongTensor([attending_seq * self.num_heads] * bs), dim=0) \
                 .reshape((bs * self.num_heads, attending_seq, key_padding_mask.shape[1]))
 
-            scores.masked_fill_(key_padding_mask.bool(), float("-inf"))
+            scores.masked_fill_(key_padding_mask.bool(), float("-inf"), device=scores.device)
            # scores = scores.reshape((bs, attended_seq, attended_seq))
             # YOUR CODE ENDS HERE
 
