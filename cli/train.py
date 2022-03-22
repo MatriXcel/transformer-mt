@@ -457,7 +457,7 @@ def main():
         max_seq_len=args.max_seq_length,
         src_vocab_size=source_tokenizer.vocab_size,
         tgt_vocab_size=target_tokenizer.vocab_size,
-        dropout=args.dropout
+        dropout=args.dropout_rate
     )
     # YOUR CODE ENDS HERE
 
