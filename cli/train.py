@@ -311,7 +311,11 @@ def preprocess_function(
     # Inline question 4.1:
     # What does the loop below do? Why dos target_tokenizer has max_length=max_seq_length-1?
     # YOUR ANSWER HERE (please limit your answer to 1-2 sentences):
-    #
+
+    #appends  a list of token ids of translated target language text into a list containing translation token ids for each example
+    #max_seq_length - 1 because of the end of sequence token that gets appended below
+    
+
     # END OF YOUR ANSWER
     decoder_input_ids = []
     labels = []
@@ -322,7 +326,7 @@ def preprocess_function(
     # Inline question 4.2:
     # Why do we need to shift the target text by one token?
     # YOUR ANSWER HERE (please limit your answer to one sentence):
-    #
+    #so that the model can learn when to generate an eos token
     # END OF YOUR ANSWER
     model_inputs["decoder_input_ids"] = decoder_input_ids
     model_inputs["labels"] = labels
@@ -372,6 +376,8 @@ def evaluate_model(
 
             # Inline question 4.3:
             # What is the diffrence between model.forward() and model.generate()?
+
+
             # Do we need to have decoder_input_ids in the .forward() call? In .generate() call?
             # YOUR ANSWER HERE (please limit your answer to 1-2 sentences):
             #
@@ -396,6 +402,7 @@ def evaluate_model(
             bleu.add_batch(predictions=decoded_preds, references=decoded_labels)
 
     model.train()
+
     eval_metric = bleu.compute()
     evaluation_results = {
         "bleu": eval_metric["score"],
@@ -409,6 +416,7 @@ def main():
     args = parse_args()
     logger.info(f"Starting script with arguments: {args}")
 
+    print("USING THE FOLLOWING DEVICE ", args.device)
     # Initialize wandb as soon as possible to log all stdout to the cloud
     wandb.init(project=args.wandb_project, config=args)
 
