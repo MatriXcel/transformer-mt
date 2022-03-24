@@ -106,6 +106,15 @@ def parse_args():
         required=True,
         help="Target language id for translation.",
     )
+
+    parser.add_argument(
+        "--max_eval_steps",
+        default=10000,
+        type=int,
+        required=False,
+        help="number of steps eval runs for",
+    )
+
     # Data arguments
     parser.add_argument(
         "--dataset_name",
@@ -365,11 +374,19 @@ def evaluate_model(
     max_seq_length,
     generation_type,
     beam_size,
+    max_eval_steps
 ):
     n_generated_tokens = 0
     model.eval()
+
+    runs = 0
+
     for batch in tqdm(dataloader, desc="Evaluation"):
         with torch.inference_mode():
+
+            if runs >= max_eval_steps:
+                break
+
             input_ids = batch["input_ids"].to(device)
             labels = batch["labels"].to(device)
             key_padding_mask = batch["encoder_padding_mask"].to(device)
@@ -400,6 +417,7 @@ def evaluate_model(
             decoded_preds, decoded_labels = utils.postprocess_text(decoded_preds, decoded_labels)
 
             bleu.add_batch(predictions=decoded_preds, references=decoded_labels)
+            runs += 1
 
     model.train()
 
@@ -651,6 +669,7 @@ def main():
                     max_seq_length=args.max_seq_length,
                     generation_type=args.generation_type,
                     beam_size=args.beam_size,
+                    max_eval_steps=args.max_eval_steps
                 )
                 # YOUR CODE ENDS HERE
                 wandb.log(
