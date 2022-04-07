@@ -335,7 +335,9 @@ def preprocess_function(
     # Inline question 4.2:
     # Why do we need to shift the target text by one token?
     # YOUR ANSWER HERE (please limit your answer to one sentence):
-    #so that the model can learn when to generate an eos token
+    #we shift target text by 1 for labels so that the model can learn when to generate an eos token in the case
+    #and for decoder_input_ids so that the model can learn to generate the first word in the translation sequence given the BOS token,
+    #as is done in generate
     # END OF YOUR ANSWER
     model_inputs["decoder_input_ids"] = decoder_input_ids
     model_inputs["labels"] = labels
@@ -393,9 +395,17 @@ def evaluate_model(
 
             # Inline question 4.3:
             # What is the diffrence between model.forward() and model.generate()?
-
+            #model.forward handles forward propagation of the inputs of our model through the layers during training and generates an output
+            #whereas model.generate() is running in inference mode, assumes the model is already trained, 
+            #it does the encode and decode steps as forward does to generate each token in the translation sequence, but it also computes a
+            #test score between the predicted translation and actual translation given by a human
 
             # Do we need to have decoder_input_ids in the .forward() call? In .generate() call?
+
+            #we need it in train so that the model can generate the first word of the translation sequence given the input sequence without cheating
+            #we need it in the generate call cause we want the model to generate the first word given the BOS token, so we make it the first token
+            #so we need it in both
+
             # YOUR ANSWER HERE (please limit your answer to 1-2 sentences):
             #
             generated_tokens = model.generate(
@@ -556,10 +566,10 @@ def main():
     )
 
     eval_dataloader = DataLoader(
-        train_dataset, shuffle=False, collate_fn=collation_function_for_seq2seq_wrapped, batch_size=args.batch_size
+        eval_dataset, shuffle=False, collate_fn=collation_function_for_seq2seq_wrapped, batch_size=args.batch_size
     )
+    
     # YOUR CODE ENDS HERE
-
     ###############################################################################
     # Part 5: Create optimizer and scheduler
     ###############################################################################
