@@ -386,8 +386,8 @@ def evaluate_model(
     for batch in tqdm(dataloader, desc="Evaluation"):
         with torch.inference_mode():
 
-            if runs >= max_eval_steps:
-                break
+            # if runs >= max_eval_steps:
+            #     break
 
             input_ids = batch["input_ids"].to(device)
             labels = batch["labels"].to(device)
@@ -568,7 +568,7 @@ def main():
     eval_dataloader = DataLoader(
         eval_dataset, shuffle=False, collate_fn=collation_function_for_seq2seq_wrapped, batch_size=args.batch_size
     )
-    
+
     # YOUR CODE ENDS HERE
     ###############################################################################
     # Part 5: Create optimizer and scheduler
