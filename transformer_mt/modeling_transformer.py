@@ -282,7 +282,7 @@ class TransfomerEncoderDecoderModel(nn.Module):
         encoder_hidden_states = src_embeds_with_pos
 
         for i, l in enumerate(self.encoder_layers):
-            encoder_hidden_states = l(encoder_hidden_states, key_padding_mask=key_padding_mask) #[batch_size, seq_len, hidden]
+            encoder_hidden_states = l(encoder_hidden_states, key_padding_mask=None) #[batch_size, seq_len, hidden]
         # YOUR CODE ENDS HERE
 
         return encoder_hidden_states
