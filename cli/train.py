@@ -436,7 +436,8 @@ def evaluate_model(
         "bleu": eval_metric["score"],
         "generation_length": n_generated_tokens / len(dataloader.dataset),
     }
-    return evaluation_results, decoded_preds, decoded_labels
+    
+    return evaluation_results, input_ids, decoded_preds, decoded_labels
 
 
 def main():
@@ -671,7 +672,7 @@ def main():
                 )
 
             if global_step % args.eval_every_steps == 0 or global_step == args.max_train_steps:
-                eval_results, decoded_preds, decoded_labels = evaluate_model(
+                eval_results, last_input_ids, last_decoded_preds, last_decoded_labels = evaluate_model(
                     model=model,
                     dataloader=eval_dataloader,
                     target_tokenizer=target_tokenizer,
@@ -690,10 +691,11 @@ def main():
                     step=global_step,
                 )
                 logger.info("Generation example:")
-                random_index = random.randint(0, len(input_ids) - 1)
-                logger.info(f"Input sentence: {source_tokenizer.decode(input_ids[random_index], skip_special_tokens=True)}")
-                logger.info(f"Generated sentence: {decoded_preds[random_index]}")
-                logger.info(f"Reference sentence: {decoded_labels[random_index][0]}")
+                random_index = random.randint(0, len(last_input_ids) - 1)
+                logger.info(f"Input sentence: {source_tokenizer.decode(last_input_ids[random_index], skip_special_tokens=True)}")
+                logger.info(f"Generated sentence: {last_decoded_preds[random_index]}")
+                logger.info(f"Reference sentence: {last_decoded_labels[random_index][0]}")
+
 
                 logger.info("Saving model checkpoint to %s", args.output_dir)
                 model.save_pretrained(args.output_dir)
