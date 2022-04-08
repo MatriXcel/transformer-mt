@@ -96,7 +96,7 @@ class MultiHeadAttention(nn.Module):
             # in this case, remember to reshape them back
             # Our implementation is 3 lines
             # YOUR CODE STARTS HERE
-            scores = scores.reshape((bs, self.num_heads, attending_seq, attended_seq))
+            scores = scores.view((bs, self.num_heads, attending_seq, -1))
             key_padding_mask = key_padding_mask.to(scores.device)
 
             #key_padding_mask = torch.repeat_interleave(key_padding_mask, torch.LongTensor([attending_seq * self.num_heads] * bs).to(key_padding_mask.device), dim=0) \
@@ -105,8 +105,8 @@ class MultiHeadAttention(nn.Module):
             #print(key_padding_mask.shape[1])
             #print(attended_seq)
 
-            scores.masked_fill_(key_padding_mask.bool().unsqueeze(1).unsqueeze(2), float("-inf"))
-            scores = scores.reshape((bs * self.num_heads, attending_seq, attended_seq))
+            scores.masked_fill_((key_padding_mask == 1).unsqueeze(1).unsqueeze(2), float("-inf"))
+            scores = scores.view((bs * self.num_heads, attending_seq, -1))
             # YOUR CODE ENDS HERE
 
         assert scores.size() == (bs * self.num_heads, attending_seq, attended_seq),\
