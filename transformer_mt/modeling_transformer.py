@@ -122,7 +122,7 @@ class TransformerDecoderLayer(nn.Module):
         # Note : Please write shape of the tensor for each line of code
         # YOUR CODE STARTS HERE (our implementation is about 10 lines)
 
-        h = self.self_attention(decoder_hidden_states, key_padding_mask=key_padding_mask) #[batch_size, seq_len, hidden]
+        h = self.self_attention(decoder_hidden_states) #[batch_size, seq_len, hidden]
         h = h + decoder_hidden_states
 
         h = self.att_layer_norm(h) #[batch_size, seq_len, hidden]
@@ -282,7 +282,7 @@ class TransfomerEncoderDecoderModel(nn.Module):
         encoder_hidden_states = src_embeds_with_pos
 
         for i, l in enumerate(self.encoder_layers):
-            encoder_hidden_states = l(encoder_hidden_states, key_padding_mask=key_padding_mask) #[batch_size, seq_len, hidden]
+            encoder_hidden_states = l(encoder_hidden_states, key_padding_mask=None) #[batch_size, seq_len, hidden]
         # YOUR CODE ENDS HERE
 
         return encoder_hidden_states
